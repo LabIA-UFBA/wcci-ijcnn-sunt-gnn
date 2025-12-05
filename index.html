@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GNNs for Public Transport Modeling with the SUNT Dataset – WCCI/IJCNN 2026 Tutorial</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="Hands-on tutorial at WCCI/IJCNN 2026 on modeling public transportation with Graph Neural Networks using the SUNT dataset, a landmark spatiotemporal dataset from Salvador, Brazil."
+  />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-light: #111827;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.12);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --card: #020617;
+      --border: #1f2937;
+      --radius-lg: 18px;
+      --radius-full: 999px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 45%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(
+        to bottom,
+        rgba(2, 6, 23, 0.95),
+        rgba(2, 6, 23, 0.75),
+        transparent
+      );
+    }
+
+    .nav {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      border-color: var(--accent-soft);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+    }
+
+    .hero {
+      margin-top: 32px;
+      padding: 24px 22px 26px;
+      border-radius: 24px;
+      background: radial-gradient(circle at top left, #4ade8066, #1f2937 50%, #020617);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 80% 0, rgba(56, 189, 248, 0.18), transparent 55%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.72);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+    }
+
+    .hero-title {
+      font-size: clamp(1.9rem, 3vw, 2.3rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 10px;
+    }
+
+    .hero-title span {
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-size: 0.98rem;
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 18px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 18px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .hero-meta span {
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      font-size: 0.9rem;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #022c22;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(22, 163, 74, 0.45);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      border-color: rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent-soft);
+      color: var(--text);
+    }
+
+    main {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr);
+      gap: 24px;
+    }
+
+    section {
+      margin-bottom: 24px;
+      padding: 18px 18px 16px;
+      border-radius: var(--radius-lg);
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid var(--border);
+    }
+
+    section h2 {
+      font-size: 1.05rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      color: var(--muted);
+    }
+
+    section h2 span {
+      color: var(--accent);
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #d1d5db;
+      margin-bottom: 7px;
+    }
+
+    ul {
+      list-style: none;
+      margin-top: 4px;
+      margin-bottom: 6px;
+    }
+
+    ul li {
+      font-size: 0.93rem;
+      padding-left: 18px;
+      position: relative;
+      color: #d1d5db;
+      margin-bottom: 4px;
+    }
+
+    ul li::before {
+      content: "•";
+      position: absolute;
+      left: 4px;
+      color: var(--accent);
+      font-size: 0.8rem;
+      top: 2px;
+    }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+      font-size: 0.9rem;
+    }
+
+    .schedule-table th,
+    .schedule-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+      text-align: left;
+    }
+
+    .schedule-table th {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .schedule-table tr:hover td {
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
+
+    .pill.primary {
+      border-color: var(--accent-soft);
+      background: rgba(34, 197, 94, 0.12);
+      color: #bbf7d0;
+    }
+
+    .instructors {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .instructor-card {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 10px 12px 10px;
+    }
+
+    .instructor-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .instructor-affiliation {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .instructor-bio {
+      font-size: 0.86rem;
+      color: #d1d5db;
+    }
+
+    footer {
+      margin-top: 12px;
+      padding-top: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid #111827;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        padding-inline: 12px;
+      }
+      .hero {
+        padding: 18px 14px 18px;
+      }
+      .hero-meta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="logo">
+        GNN &middot; <span>SUNT</span>
+      </div>
+      <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#objectives">Objectives</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#prerequisites">Prerequisites</a>
+        <a href="#setup">Setup</a>
+        <a href="#materials">Materials</a>
+        <a href="#instructors">Instructors</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="page">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="badge-row">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            Tutorial &middot; WCCI / IJCNN 2026
+          </div>
+          <div class="badge">
+            Based on the SUNT dataset (Nature Scientific Data)
+          </div>
+        </div>
+        <h1 class="hero-title">
+          Graph Neural Networks for Public Transport Modeling<br />
+          <span>Hands-on with the SUNT Spatiotemporal Dataset</span>
+        </h1>
+        <p class="hero-subtitle">
+          This tutorial shows step by step how to model large-scale public transportation systems
+          using Graph Neural Networks on the SUNT dataset, a landmark spatiotemporal dataset
+          from Salvador, Brazil. We combine theory and code, from raw stops and trips
+          to graph construction, GNN architectures, and evaluation.
+        </p>
+
+        <div class="hero-meta">
+          <span>WCCI / IJCNN 2026 &middot; Tutorial</span>
+          <span>Level: Intermediate – Advanced (GNN & time-series)</span>
+          <span>Format: Short talks + live coding + Q&A</span>
+        </div>
+
+        <div class="hero-actions">
+          <!-- Replace with your real repo link -->
+          <a class="btn-primary" href="https://github.com/YOUR-USER/YOUR-TUTORIAL-REPO" target="_blank">
+            View tutorial repository
+          </a>
+          <!-- Replace with real paper link if you like -->
+          <a
+            class="btn-ghost"
+            href="https://www.nature.com/articles/s41597-025-05674-6"
+            target="_blank"
+          >
+            Read the SUNT dataset paper
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <main>
+      <section id="overview">
+        <h2><span>01</span> &middot; Overview</h2>
+        <p>
+          Urban public transport systems produce massive spatiotemporal data streams combining stops,
+          routes, vehicles, and passenger flows. The SUNT dataset captures one year of operations in
+          Salvador, Brazil, at high temporal resolution, enabling realistic modeling of operational
+          dynamics.
+        </p>
+        <p>
+          This tutorial guides participants through the complete pipeline for applying modern Graph
+          Neural Networks (GNNs) to public transport data, from graph construction and feature
+          engineering to model design, training, and evaluation. Emphasis is placed on reproducible
+          code, best practices, and open research directions.
+        </p>
+      </section>
+
+      <section id="objectives">
+        <h2><span>02</span> &middot; Learning objectives</h2>
+        <p>By the end of this tutorial, participants will be able to:</p>
+        <ul>
+          <li>Understand the structure and main components of the SUNT dataset.</li>
+          <li>Build stop-level and line-level graphs from spatiotemporal transit data.</li>
+          <li>Implement baseline GNN models for prediction tasks on public transport networks.</li>
+          <li>Compare GNNs with standard temporal models in this domain.</li>
+          <li>Identify open challenges and research opportunities in GNNs for mobility.</li>
+        </ul>
+      </section>
+
+      <section id="schedule">
+        <h2><span>03</span> &middot; Tentative schedule</h2>
+        <p>The schedule below assumes a half-day tutorial and may be adjusted to the final slot.</p>
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Topic</th>
+              <th>Format</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>00:00 – 00:20</td>
+              <td>Motivation, SUNT dataset overview, and problem formulation</td>
+              <td>Talk</td>
+            </tr>
+            <tr>
+              <td>00:20 – 00:50</td>
+              <td>From stops to graphs: building spatial and spatiotemporal graphs</td>
+              <td>Talk + live demo</td>
+            </tr>
+            <tr>
+              <td>00:50 – 01:20</td>
+              <td>GNN fundamentals for mobility: GCN, GraphSAGE, and variants</td>
+              <td>Talk</td>
+            </tr>
+            <tr>
+              <td>01:20 – 01:30</td>
+              <td>Coffee break</td>
+              <td>Break</td>
+            </tr>
+            <tr>
+              <td>01:30 – 02:15</td>
+              <td>Hands-on notebook: training GNN models on SUNT</td>
+              <td>Live coding + exercises</td>
+            </tr>
+            <tr>
+              <td>02:15 – 02:40</td>
+              <td>Evaluation, error analysis, and discussion of limitations</td>
+              <td>Talk + discussion</td>
+            </tr>
+            <tr>
+              <td>02:40 – 03:00</td>
+              <td>Open research directions and Q&amp;A</td>
+              <td>Discussion</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="prerequisites">
+        <h2><span>04</span> &middot; Prerequisites</h2>
+        <p>We assume that participants are comfortable with:</p>
+        <ul>
+          <li>Python programming (basic scripting, functions, and notebooks).</li>
+          <li>Fundamentals of machine learning and deep learning.</li>
+          <li>Basic graph terminology (nodes, edges, adjacency, neighborhoods).</li>
+        </ul>
+        <p>Helpful, but not strictly required:</p>
+        <ul>
+          <li>Previous experience with PyTorch or similar deep learning frameworks.</li>
+          <li>Some familiarity with time-series or spatiotemporal data.</li>
+        </ul>
+      </section>
+
+      <section id="setup">
+        <h2><span>05</span> &middot; Software setup</h2>
+        <p>
+          To follow the hands-on part, we recommend that participants bring a laptop with the
+          following tools installed:
+        </p>
+        <ul>
+          <li>Python 3.10+ (Anaconda/Miniconda is recommended).</li>
+          <li>Jupyter Notebook or JupyterLab.</li>
+          <li>PyTorch and a GNN library (e.g., PyTorch Geometric or DGL).</li>
+        </ul>
+        <p>We will provide a ready-to-use environment file and setup instructions in the repository:</p>
+        <p>
+          <code>environment.yml</code> or <code>requirements.txt</code> will be available at<br />
+          <a href="https://github.com/YOUR-USER/YOUR-TUTORIAL-REPO" target="_blank">
+            https://github.com/YOUR-USER/YOUR-TUTORIAL-REPO
+          </a>
+        </p>
+        <p>
+          For participants without a local setup, we will also share links to Google Colab notebooks
+          that can be run directly in the browser.
+        </p>
+      </section>
+
+      <section id="materials">
+        <h2><span>06</span> &middot; Materials</h2>
+        <p>The following materials will be made available before and during the tutorial:</p>
+        <ul>
+          <li>
+            <span class="pill primary">Slides</span>
+            <span class="pill">PDF</span>
+            Tutorial slides summarizing the main concepts and case studies.
+          </li>
+          <li>
+            <span class="pill primary">Notebooks</span>
+            <span class="pill">Colab</span>
+            Step-by-step notebooks for data loading, graph construction, and GNN training.
+          </li>
+          <li>
+            <span class="pill">Code</span>
+            Reproducible PyTorch code for baseline models and experiments.
+          </li>
+          <li>
+            <span class="pill">Dataset</span>
+            Link to the official SUNT dataset and documentation.
+          </li>
+        </ul>
+        <p>
+          Dataset paper:<br />
+          <a
+            href="https://www.nature.com/articles/s41597-025-05674-6"
+            target="_blank"
+          >
+            SUNT: A Landmark Spatiotemporal Dataset for Public Transportation
+          </a>
+        </p>
+      </section>
+
+      <section id="instructors">
+        <h2><span>07</span> &middot; Instructors</h2>
+        <div class="instructors">
+          <div class="instructor-card">
+            <div class="instructor-name">Ricardo A. Rios</div>
+            <div class="instructor-affiliation">
+              Federal University of Bahia (UFBA), Brazil &amp; University of Waikato, New Zealand
+            </div>
+            <p class="instructor-bio">
+              Ricardo is a professor of Computer Science at UFBA and visiting researcher at the
+              University of Waikato. He leads projects on AI for public transportation, including
+              the SUNT dataset and bus service optimization using machine learning and GNNs.
+            </p>
+          </div>
+
+          <!-- Duplicate and edit these cards for co-instructors -->
+          <div class="instructor-card">
+            <div class="instructor-name">[Co-instructor Name]</div>
+            <div class="instructor-affiliation">[Affiliation]</div>
+            <p class="instructor-bio">
+              Short bio focusing on expertise in machine learning, GNNs, mobility, or related
+              areas, and current projects connected to the tutorial.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <h2><span>08</span> &middot; Contact</h2>
+        <p>
+          If you have any questions about the tutorial, prerequisites, or materials, please feel
+          free to contact the organizers:
+        </p>
+        <ul>
+          <li>Email: <a href="mailto:YOUR-EMAIL@domain">YOUR-EMAIL@domain</a></li>
+          <li>GitHub: <a href="https://github.com/YOUR-USER" target="_blank">https://github.com/YOUR-USER</a></li>
+        </ul>
+        <p>
+          We look forward to seeing you at WCCI / IJCNN 2026 and exploring GNNs for public
+          transportation modeling together.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2026 Tutorial &middot; Graph Neural Networks for Public Transport Modeling with the SUNT Dataset
+    </footer>
+  </div>
+</body>
+</html>
+
