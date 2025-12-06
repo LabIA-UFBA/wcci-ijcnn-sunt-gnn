@@ -435,7 +435,7 @@ Public Transportation – WCCI/IJCNN 2026 Tutorial</title>
 
         <div class="hero-meta">
           <span>WCCI / IJCNN 2026 &middot; Tutorial</span>
-          <span>Level: Intermediate – Advanced (GNN & time-series)</span>
+          <span>Level: Intermediate (time-series & GNN)</span>
           <span>Format: Short talks + live coding + Q&A</span>
         </div>
 
@@ -489,8 +489,12 @@ Public Transportation – WCCI/IJCNN 2026 Tutorial</title>
       </section>
 
       <section id="schedule">
-        <h2><span>03</span> &middot; Tentative schedule</h2>
-        <p>The schedule below assumes a half-day tutorial and may be adjusted to the final slot.</p>
+        <h2><span>03</span> &middot; Schedule</h2>
+        <p>
+          The tutorial is organized as a 4-hour, hands-on session that progressively moves
+          from understanding the SUNT dataset to advanced GNN models and open research
+          directions.
+        </p>
         <table class="schedule-table">
           <thead>
             <tr>
@@ -501,43 +505,35 @@ Public Transportation – WCCI/IJCNN 2026 Tutorial</title>
           </thead>
           <tbody>
             <tr>
-              <td>00:00 – 00:20</td>
-              <td>Motivation, SUNT dataset overview, and problem formulation</td>
-              <td>Talk</td>
-            </tr>
-            <tr>
-              <td>00:20 – 00:50</td>
-              <td>From stops to graphs: building spatial and spatiotemporal graphs</td>
+              <td>00:00 – 01:00</td>
+              <td>Getting to know the SUNT dataset: geospatial and temporal visualizations</td>
               <td>Talk + live demo</td>
             </tr>
             <tr>
-              <td>00:50 – 01:20</td>
-              <td>GNN fundamentals for mobility: GCN, GraphSAGE, and variants</td>
-              <td>Talk</td>
+              <td>01:00 – 02:00</td>
+              <td>
+                Exploring time: classical models (ARIMA), RNNs, Transformers, and foundation models
+              </td>
+              <td>Talk + code walkthrough</td>
             </tr>
             <tr>
-              <td>01:20 – 01:30</td>
-              <td>Coffee break</td>
-              <td>Break</td>
+              <td>02:00 – 03:30</td>
+              <td>
+                Graph Neural Networks for node- and edge-level forecasting/classification on SUNT
+              </td>
+              <td>Live coding + hands-on exercises</td>
             </tr>
             <tr>
-              <td>01:30 – 02:15</td>
-              <td>Hands-on notebook: training GNN models on SUNT</td>
-              <td>Live coding + exercises</td>
-            </tr>
-            <tr>
-              <td>02:15 – 02:40</td>
-              <td>Evaluation, error analysis, and discussion of limitations</td>
-              <td>Talk + discussion</td>
-            </tr>
-            <tr>
-              <td>02:40 – 03:00</td>
-              <td>Open research directions and Q&amp;A</td>
-              <td>Discussion</td>
+              <td>03:30 – 04:00</td>
+              <td>
+                Discussion and future research directions with SUNT and GNN-based transit modeling
+              </td>
+              <td>Open discussion + Q&amp;A</td>
             </tr>
           </tbody>
         </table>
       </section>
+
 
       <section id="prerequisites">
         <h2><span>04</span> &middot; Prerequisites</h2>
@@ -568,8 +564,8 @@ Public Transportation – WCCI/IJCNN 2026 Tutorial</title>
         <p>We will provide a ready-to-use environment file and setup instructions in the repository:</p>
         <p>
           <code>environment.yml</code> or <code>requirements.txt</code> will be available at<br />
-          <a href="https://github.com/YOUR-USER/YOUR-TUTORIAL-REPO" target="_blank">
-            https://github.com/YOUR-USER/YOUR-TUTORIAL-REPO
+          <a href="#" target="_blank">
+            TBD
           </a>
         </p>
         <p>
@@ -616,24 +612,39 @@ Public Transportation – WCCI/IJCNN 2026 Tutorial</title>
         <h2><span>07</span> &middot; Instructors</h2>
         <div class="instructors">
           <div class="instructor-card">
-            <div class="instructor-name">Ricardo A. Rios</div>
+            <div class="instructor-name">Ricardo Rios</div>
             <div class="instructor-affiliation">
-              Federal University of Bahia (UFBA), Brazil &amp; University of Waikato, New Zealand
+              Federal University of Bahia (UFBA), Brazil
             </div>
             <p class="instructor-bio">
-              Ricardo is a professor of Computer Science at UFBA and visiting researcher at the
-              University of Waikato. He leads projects on AI for public transportation, including
-              the SUNT dataset and bus service optimization using machine learning and GNNs.
+              Professor at IC/UFBA and Senior Member of the IEEE. His research areas include Artificial Intelligence, Machine Learning, Data Science, and Signal Processing. 
             </p>
           </div>
 
           <!-- Duplicate and edit these cards for co-instructors -->
           <div class="instructor-card">
-            <div class="instructor-name">[Co-instructor Name]</div>
-            <div class="instructor-affiliation">[Affiliation]</div>
+            <div class="instructor-name">Tatiane Nogueira</div>
+            <div class="instructor-affiliation">Federal University of Bahia (UFBA), Brazil</div>
             <p class="instructor-bio">
-              Short bio focusing on expertise in machine learning, GNNs, mobility, or related
-              areas, and current projects connected to the tutorial.
+              Professor at IC/UFBA  and Senior Member of the IEEE. Her research areas include Artificial Intelligence, Reinforcement Learning, and Fuzzy Systems.
+            </p>
+          </div>
+
+          <!-- Duplicate and edit these cards for co-instructors -->
+          <div class="instructor-card">
+            <div class="instructor-name">Islame Fernandes</div>
+            <div class="instructor-affiliation">Federal University of Bahia (UFBA), Brazil</div>
+            <p class="instructor-bio">
+              Professor at IC/UFBA and Ph.D. in Computer Science. His research interests include Single- and Multi-Objective Optimization, Graph Theory, Metaheuristics, and Evolutionary Computation.
+            </p>
+          </div>
+
+          <!-- Duplicate and edit these cards for co-instructors -->
+          <div class="instructor-card">
+            <div class="instructor-name">Marcos Ferreira</div>
+            <div class="instructor-affiliation">Federal University of Bahia (UFBA), Brazil</div>
+            <p class="instructor-bio">
+              PhD Student at the Institute of Computing of the Federal University of Bahia (IC/UFBA), researching foundation models and spatio-temporal modeling.
             </p>
           </div>
         </div>
@@ -646,8 +657,8 @@ Public Transportation – WCCI/IJCNN 2026 Tutorial</title>
           free to contact the organizers:
         </p>
         <ul>
-          <li>Email: <a href="mailto:YOUR-EMAIL@domain">YOUR-EMAIL@domain</a></li>
-          <li>GitHub: <a href="https://github.com/YOUR-USER" target="_blank">https://github.com/YOUR-USER</a></li>
+          <li>Email: <a href="mailto:ricardoar@ufba.br">ricardoar [at] ufba [dot] br</a></li>
+          <li>GitHub: <a href="https://labia.ufba.br" target="_blank">https://labia.ufba.br</a></li>
         </ul>
         <p>
           We look forward to seeing you at WCCI / IJCNN 2026 and exploring GNNs for public
